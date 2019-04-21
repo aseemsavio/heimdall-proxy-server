@@ -22,7 +22,7 @@ public class HeimdallController {
     @GetMapping("/wakeUpCall")
     public ResponseEntity<List<AwakeResponse>> wakeUpCall(){
         List<AwakeResponse> awakeResponseList = heimdallService.wakeUpCall();
-        return null;
+        return ResponseEntity.ok().header("status", "success").body(awakeResponseList);
     }
 
 }

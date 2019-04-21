@@ -33,7 +33,7 @@ public class HeimdallService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        AwakeResponse awakeResponse = new AwakeResponse(coolioResourceServerName, heartBeat);
-        return null;
+        awakeResponseList.add(new AwakeResponse(coolioResourceServerName, heartBeat));
+        return awakeResponseList;
     }
 }

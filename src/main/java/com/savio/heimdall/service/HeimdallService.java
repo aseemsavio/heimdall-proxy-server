@@ -33,6 +33,8 @@ public class HeimdallService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        if(heartBeat.equals(null))
+            heartBeat = "sleeping";
         awakeResponseList.add(new AwakeResponse(coolioResourceServerName, heartBeat));
         return awakeResponseList;
     }

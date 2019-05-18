@@ -13,10 +13,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableEurekaClient
 public class HeimdallApplication {
 
-    @Bean
+    /*@Bean
     public WebClient.Builder getWebClientBuilder(){
         return WebClient.builder();
-    }
+    }*/
 
     public static void main(String[] args) {
         SpringApplication.run(HeimdallApplication.class, args);

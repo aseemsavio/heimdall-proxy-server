@@ -26,7 +26,8 @@ public class HeimdallController {
     @Autowired
     HeimdallService heimdallService;
 
-    WebClient webClient;
+    WebClient coolioWC;
+    WebClient invenioWC;
 
     @Value("${coolio-resource-server-url}")
     private String coolioResourceServerURL;
@@ -34,25 +35,46 @@ public class HeimdallController {
     @Value("${app-name.coolio-resource-server}")
     private String coolioResourceServerName;
 
+    @Value("${invenio-discovery-service-url}")
+    private String invenioDiscoveryServiceURL;
+
+    @Value("${app-name.invenio-discovery-service}")
+    private String invenioDiscoveryServiceName;
+
     @PostConstruct
     public void init(){
-        webClient = WebClient.builder().baseUrl(coolioResourceServerURL)
+        coolioWC = WebClient.builder().baseUrl(coolioResourceServerURL)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
+
+        invenioWC = WebClient.builder().baseUrl(invenioDiscoveryServiceURL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
     @GetMapping("/wakeUpCall")
     public ResponseEntity<List<AwakeResponse>> wakeUpCall(){
 
-        Mono<String> coolioResourceServerMono = getMono();
+        Mono<String> coolioResourceServerMono = getCoolioMono();
+        Mono<String> invenioDiscoveryServiceMono = getInvenioMono();
+
         String coolioResourceServerString = getValue(coolioResourceServerMono);
+        String invenioDiscoveryServiceString = getValue(invenioDiscoveryServiceMono);
+
         List<AwakeResponse> awakeResponseList = new ArrayList<>();
         awakeResponseList.add(new AwakeResponse(coolioResourceServerName, getStatus(coolioResourceServerString)));
-        awakeResponseList.add(new AwakeResponse("Savio", "sleeping"));
+        awakeResponseList.add(new AwakeResponse(invenioDiscoveryServiceName, getStatus(invenioDiscoveryServiceString)));
+
         return ResponseEntity.ok().header("status", "success").body(awakeResponseList);
     }
 
-    public Mono<String> getMono(){
-        return webClient.get()
+    public Mono<String> getCoolioMono(){
+        return coolioWC.get()
+                .uri("/all/lub")
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getInvenioMono(){
+        return invenioWC.get()
                 .uri("/all/lub")
                 .retrieve()
                 .bodyToMono(String.class);

@@ -39,7 +39,7 @@ public class HeimdallController {
     public ResponseEntity<List<AwakeResponse>> wakeUpCall(){
 
         Mono<String> dub = aseem();
-        String a = dub.toString();
+        String a = getValue(dub);
         //List<AwakeResponse> awakeResponseList = heimdallService.wakeUpCall();
         List<AwakeResponse> awakeResponseList = new ArrayList<>();
         awakeResponseList.add(new AwakeResponse(a, "awake"));

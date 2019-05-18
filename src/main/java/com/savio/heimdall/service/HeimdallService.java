@@ -15,27 +15,10 @@ import java.util.List;
 @Service
 public class HeimdallService {
 
-    @Value("${coolio-resource-server-url}")
-    private String coolioResourceServerURL;
 
-    @Value("${app-name.coolio-resource-server}")
-    private String coolioResourceServerName;
 
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    public List<AwakeResponse> wakeUpCall() {
 
-        List<AwakeResponse> awakeResponseList = null;
-        String heartBeat = webClientBuilder.build()
-                .get()
-                .uri(coolioResourceServerURL + "/all/lub")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        if(heartBeat.equals(null))
-            heartBeat = "sleeping";
-        awakeResponseList.add(new AwakeResponse(coolioResourceServerName, heartBeat));
-        return awakeResponseList;
-    }
 }

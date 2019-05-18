@@ -3,18 +3,17 @@ package com.savio.heimdall.controller;
 import com.savio.heimdall.service.HeimdallService;
 import com.savio.heimdall.template.AwakeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,25 +28,30 @@ public class HeimdallController {
 
     WebClient webClient;
 
+    @Value("${coolio-resource-server-url}")
+    private String coolioResourceServerURL;
+
+    @Value("${app-name.coolio-resource-server}")
+    private String coolioResourceServerName;
+
     @PostConstruct
     public void init(){
-        webClient = WebClient.builder().baseUrl("https://coolio-resource-server.herokuapp.com")
+        webClient = WebClient.builder().baseUrl(coolioResourceServerURL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
     @GetMapping("/wakeUpCall")
     public ResponseEntity<List<AwakeResponse>> wakeUpCall(){
 
-        Mono<String> dub = aseem();
-        String a = getValue(dub);
-        //List<AwakeResponse> awakeResponseList = heimdallService.wakeUpCall();
+        Mono<String> coolioResourceServerMono = getMono();
+        String coolioResourceServerString = getValue(coolioResourceServerMono);
         List<AwakeResponse> awakeResponseList = new ArrayList<>();
-        awakeResponseList.add(new AwakeResponse(a, "awake"));
+        awakeResponseList.add(new AwakeResponse(coolioResourceServerName, getStatus(coolioResourceServerString)));
         awakeResponseList.add(new AwakeResponse("Savio", "sleeping"));
         return ResponseEntity.ok().header("status", "success").body(awakeResponseList);
     }
 
-    public Mono<String> aseem(){
+    public Mono<String> getMono(){
         return webClient.get()
                 .uri("/all/lub")
                 .retrieve()
@@ -56,6 +60,12 @@ public class HeimdallController {
 
     String getValue(Mono<String> mono) {
         return mono.block();
+    }
+
+    String getStatus(String monoString){
+        if(monoString.equals("dub"))
+            return "alive";
+        return "sleeping";
     }
 
 }

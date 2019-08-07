@@ -62,6 +62,7 @@ public class HeimdallController {
         String invenioDiscoveryServiceString = getValue(invenioDiscoveryServiceMono);
 
         List<AwakeResponse> awakeResponseList = new ArrayList<>();
+        awakeResponseList.add(new AwakeResponse("heimdall-proxy-server", "alive"));
         awakeResponseList.add(new AwakeResponse(coolioResourceServerName, getStatus(coolioResourceServerString)));
         awakeResponseList.add(new AwakeResponse(invenioDiscoveryServiceName, getStatus(invenioDiscoveryServiceString)));
 

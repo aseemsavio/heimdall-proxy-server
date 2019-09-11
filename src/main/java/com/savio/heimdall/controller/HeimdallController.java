@@ -52,6 +52,11 @@ public class HeimdallController {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
+    @GetMapping("/all/lub")
+    public String healthCheck(){
+        return "dub";
+    }
+
     @GetMapping("/wakeUpCall")
     public ResponseEntity<List<AwakeResponse>> wakeUpCall(){
 
